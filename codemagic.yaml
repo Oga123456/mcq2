@@ -13,17 +13,6 @@ workflows:
           flutter create .
           flutter pub get
 
-      - name: Auto-update version in pubspec.yaml
-        script: |
-          #!/bin/sh
-          set -e
-          set -x
-          VERSION_CODE=$(date +%s)  # unique build number
-          VERSION_NAME=$(date +%Y%m%d.%H%M)  # date-time with only one dot
-          echo "Updating pubspec.yaml with version: $VERSION_NAME+$VERSION_CODE"
-          sed -i.bak "s/^version: .*/version: $VERSION_NAME+$VERSION_CODE/" pubspec.yaml
-          grep version: pubspec.yaml
-
       - name: Build release APK
         script: flutter build apk --release
 
@@ -33,5 +22,6 @@ workflows:
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - build/app/outputs/bundle/release/app-release.aab
+
 
 
