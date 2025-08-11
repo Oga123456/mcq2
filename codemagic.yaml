@@ -1,27 +1,42 @@
 workflows:
   release-workflow:
-    name: Build APK and AAB
+    name: Build APK with assets downloaded
     max_build_duration: 60
     environment:
       flutter: stable
     scripts:
-      - name: Post-clone – Create missing Android folder and get packages
+      - name: Post-clone – Setup project and fetch assets
         script: |
           #!/bin/sh
           set -e
           set -x
+          
+          # If android/ folder is missing, create it
           flutter create .
           flutter pub get
+
+          # Create assets folders
+          mkdir -p assets/fonts
+          
+          # Download Tailwind CSS
+          curl -L https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css -o assets/tailwind.min.css
+
+          # Create inter-font.css
+          cat > assets/inter-font.css <<EOL
+          @font-face { font-family: 'Inter'; font-weight: 400; src: url('fonts/Inter-Regular.woff2') format('woff2'); }
+          @font-face { font-family: 'Inter'; font-weight: 500; src: url('fonts/Inter-Medium.woff2') format('woff2'); }
+          @font-face { font-family: 'Inter'; font-weight: 600; src: url('fonts/Inter-SemiBold.woff2') format('woff2'); }
+          @font-face { font-family: 'Inter'; font-weight: 700; src: url('fonts/Inter-Bold.woff2') format('woff2'); }
+          EOL
+
+          # Download Inter font files
+          curl -L https://rsms.me/inter/font-files/Inter-Regular.woff2 -o assets/fonts/Inter-Regular.woff2
+          curl -L https://rsms.me/inter/font-files/Inter-Medium.woff2 -o assets/fonts/Inter-Medium.woff2
+          curl -L https://rsms.me/inter/font-files/Inter-SemiBold.woff2 -o assets/fonts/Inter-SemiBold.woff2
+          curl -L https://rsms.me/inter/font-files/Inter-Bold.woff2 -o assets/fonts/Inter-Bold.woff2
 
       - name: Build release APK
         script: flutter build apk --release
 
-      - name: Build release App Bundle
-        script: flutter build appbundle --release
-
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-      - build/app/outputs/bundle/release/app-release.aab
-
-
-
