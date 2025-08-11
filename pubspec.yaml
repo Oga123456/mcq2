@@ -21,4 +21,9 @@ flutter:
   assets:
     - assets/index.html
     - assets/MCQ-Data.json
-    - assets/icon.png
+    - assets/tailwind.min.css
+    - assets/inter-font.css
+    - assets/fonts/Inter-Regular.woff2
+    - assets/fonts/Inter-Medium.woff2
+    - assets/fonts/Inter-SemiBold.woff2
+    - assets/fonts/Inter-Bold.woff2
