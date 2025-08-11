@@ -1,0 +1,35 @@
+workflows:
+  release-workflow:
+    name: Build APK and AAB
+    max_build_duration: 60
+    environment:
+      flutter: stable
+    scripts:
+      - name: Post-clone – Create missing Android folder and get packages
+        script: |
+          #!/bin/sh
+          set -e
+          set -x
+          flutter create .
+          flutter pub get
+
+      - name: Auto-update version in pubspec.yaml
+        script: |
+          #!/bin/sh
+          set -e
+          set -x
+          VERSION_CODE=$(date +%s)  # unique number from timestamp
+          VERSION_NAME=$(date +%Y.%m.%d.%H%M)  # readable date-time version
+          echo "Updating pubspec.yaml with version: $VERSION_NAME+$VERSION_CODE"
+          sed -i.bak "s/^version: .*/version: $VERSION_NAME+$VERSION_CODE/" pubspec.yaml
+          cat pubspec.yaml | grep version:
+
+      - name: Build release APK
+        script: flutter build apk --release
+
+      - name: Build release App Bundle
+        script: flutter build appbundle --release
+
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/bundle/release/app-release.aab
