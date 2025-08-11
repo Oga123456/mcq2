@@ -10,9 +10,7 @@ workflows:
           #!/bin/sh
           set -e
           set -x
-          if [ ! -d "android" ]; then
-            flutter create .
-          fi
+          flutter create .
           flutter pub get
 
       - name: Auto-update version in pubspec.yaml
@@ -20,11 +18,11 @@ workflows:
           #!/bin/sh
           set -e
           set -x
-          VERSION_CODE=$(date +%s)  # unique number from timestamp
-          VERSION_NAME=$(date +%Y.%m.%d.%H%M)  # readable date-time version
+          VERSION_CODE=$(date +%s)  # unique build number
+          VERSION_NAME=$(date +%Y%m%d.%H%M)  # date-time with only one dot
           echo "Updating pubspec.yaml with version: $VERSION_NAME+$VERSION_CODE"
           sed -i.bak "s/^version: .*/version: $VERSION_NAME+$VERSION_CODE/" pubspec.yaml
-          cat pubspec.yaml | grep version:
+          grep version: pubspec.yaml
 
       - name: Build release APK
         script: flutter build apk --release
@@ -35,4 +33,5 @@ workflows:
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - build/app/outputs/bundle/release/app-release.aab
+
 
